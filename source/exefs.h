@@ -30,7 +30,7 @@ static inline uint32_t CalculateExeFSSize(ExeFSHeader* header) {
     for (int i = 0; i < EXEFS_NUM_FILES; i++) {
         ExeFSFileHeader* file = &header->files[i];
         if (!file->size)
-            break;
+            continue;
 
         uint32_t offset = le32toh(file->offset);
         uint32_t fsize  = le32toh(file->size);
@@ -44,5 +44,5 @@ static inline uint32_t CalculateExeFSSize(ExeFSHeader* header) {
         size += align_up(fsize, EXEFS_BLOCK_SIZE);
     }
 
-    return size;
+    return sizeof(ExeFSHeader) + size;
 }

@@ -55,16 +55,6 @@ int otp_read(unsigned offset, unsigned count, uint32_t out[count]) {
 	return count;
 }
 
-void CryptSettingTxt(char* buffer)
-{
-	uint32_t key = 0x73B5DBFA;
-
-	for (int i = 0; i < 0x100; i++) {
-		buffer[i] ^= key;
-		key = (key << 1) | (key >> 31);
-	}
-}
-
 struct file { void* data; unsigned size; };
 
 int nand_read_simple(const char* path, struct file* out) {
@@ -209,6 +199,7 @@ int do_backup() {
 	memcpy(exefs->data + le32toh(exefs->header.files[i++].offset), &device_cert, sizeof device_cert);
 	memcpy(exefs->data + le32toh(exefs->header.files[i++].offset), otp.data, sizeof otp);
 
+	puts("Writing essential.exefs...");
 	sprintf(outpath, BACKUP_DIR "/essential.exefs", device_id);
 	FILE* fp = fopen(outpath, "wb");
 	if (!fp) {
